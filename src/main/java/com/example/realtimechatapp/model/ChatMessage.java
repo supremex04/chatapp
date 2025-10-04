@@ -6,6 +6,8 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+
+// @Data annotation automatically generates getter, setters, toString(), equals()
 @Data
 @Entity
 @Table(name = "chat_messages")
@@ -15,6 +17,7 @@ public class ChatMessage {
     private Long id;
 
     private String content;
+    private String sender;
     private String recipient;
     private String color;
 
