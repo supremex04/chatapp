@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,8 @@ public class ChatController {
     @Autowired
     private ChatMessageRepository chatMessageRepository;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
     // websocket destination
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/public")
@@ -57,6 +60,38 @@ public class ChatController {
 
     @MessageMapping("/chat.sendPrivateMessage")
     public void sendPrivateMessage(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor){
+        if(userService.userExists(chatMessage.getSender()) && userService.userExists(chatMessage.getRecipient())){
 
+            if(chatMessage.getTimeStamp() == null){
+                chatMessage.setTimeStamp(LocalDateTime.now());
+            }
+            if(chatMessage.getContent() == null){
+                chatMessage.setContent("");
+            }
+
+            chatMessage.setType(ChatMessage.MessageType.PRIVATE_MESSAGE);
+
+            ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
+            System.out.println("Message saved successfully with Id "+ savedMessage.getId());
+
+            try {
+                String recipientDestination = "/user/" + chatMessage.getRecipient() + "/queue/private";
+                System.out.println("Sending message to recipient destination " + recipientDestination);
+                messagingTemplate.convertAndSend(recipientDestination, savedMessage);
+
+                String senderDestination = "/user/" + chatMessage.getSender() + "/queue/private";
+                System.out.println("Sending message to sender destination " + senderDestination);
+                messagingTemplate.convertAndSend(senderDestination, savedMessage);
+            }
+            catch (Exception e){
+                System.out.println("ERROR occured while sending message "+ e.getMessage());
+                e.printStackTrace();
+
+
+            }
+        }
+        else {
+            System.out.println("ERROR: Sender "+ chatMessage.getSender()+ " or recipient "+ chatMessage.getRecipient() + " does not exist.");
+        }
     }
 }
