@@ -1,5 +1,6 @@
 package com.example.realtimechatapp.listner;
 
+import com.example.realtimechatapp.model.ChatMessage;
 import com.example.realtimechatapp.service.UserService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class WebSocketListener {
     private UserService userService;
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketListener.class);
+    private static final Logger logger = (Logger) LoggerFactory.getLogger(WebSocketListener.class);
 
     @EventListener
     public void handleWebsocketConnectListener(SessionConnectedEvent event){
@@ -26,6 +27,14 @@ public class WebSocketListener {
 
     public void handleWebsocketDisconnectListener(SessionDisconnectEvent event){
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        String username = headerAccessor.getSessionAttributes().get("username").toString();
+        userService.setUserOnlineStatus(username, false);
+
+        System.out.println("User disconnected from websocket");
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setType(ChatMessage.MessageType.LEAVE);
+        chatMessage.setSender(username);
+        messagingTemplate.convertAndSend("/topic/public", chatMessage);
 
     }
 

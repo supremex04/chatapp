@@ -7,10 +7,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface UserRepository extends JpaRepository<User, Long> {
 
     public boolean existsByUsername(String username);
-
+    public Optional<User> findByUsername(String username);
     @Transactional
     @Modifying
     @Query("UPDATE User u SET u.isOnline = :isOnline WHERE u.username = :username")
