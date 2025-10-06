@@ -30,6 +30,8 @@ public class AuthenticationService {
     @Autowired
     private JwtService jwtService;
 
+
+    // check if username exists - hash password - save user in database
     public UserDTO signup(RegisterRequestDTO registerRequestDTO){
         if(userRepository.findByUsername(registerRequestDTO.getUsername()).isPresent()){
             throw new RuntimeException("Username is already in use");
@@ -37,18 +39,22 @@ public class AuthenticationService {
 
         User user = new User();
         user.setUsername(registerRequestDTO.getUsername());
+        // BCrypt hash of password is stored in db
         user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         user.setEmail(registerRequestDTO.getEmail());
 
         User savedUser = userRepository.save(user);
+        // return a safe version of user as userDTO, without sensitive info.
         return convertToUserDTO(user);
 
 
     }
 
+    // check username - verify password - create JWT that represents logged in user - return token+ safe user info
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO){
         User user = userRepository.findByUsername(loginRequestDTO.getUsername())
                 .orElseThrow(() -> new RuntimeException("Username not found"));
+
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getUsername(), loginRequestDTO.getPassword()));
         String jwtToken = jwtService.generateToken(user);
 
@@ -58,6 +64,8 @@ public class AuthenticationService {
                 .build();
     }
 
+    // creates cookie with same name JWT but empty and max age 0
+    // effectively deleting cookie from browser and logging user out
     public ResponseEntity<String> logout(){
 
         ResponseCookie responseCookie = ResponseCookie.from("JWT", "")

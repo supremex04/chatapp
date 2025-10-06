@@ -28,12 +28,18 @@ import java.util.Arrays;
 public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    // pipeline of rules for security rules for every HTTP request
+    // Every request passes through filters and rules defined here
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-
+        // disable csrf protection as our app uses stateless JWT token, not sessions
+        // addConfigurationSource() defines allowed origins, methods, headers, and credentials
+        // important when frontend runs on different domain/port than backend
         http.csrf(CsrfConfigurer<HttpSecurity>::disable)
                 .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .cors(cors -> cors.configurationSource(addConfigurationSource()))
+                // defines which endpoints require authentication
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
