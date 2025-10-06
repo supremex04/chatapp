@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:realtimechatapplication
+    driverClassName: org.h2.Driver
+    username: test
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    h2:
+      console:
+        enabled: true
+jwt:
+  secret: testSecret
+  expiration: 360000
+

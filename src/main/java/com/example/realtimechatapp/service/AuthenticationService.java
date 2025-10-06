@@ -8,10 +8,16 @@ import com.example.realtimechatapp.jwt.JwtService;
 import com.example.realtimechatapp.model.User;
 import com.example.realtimechatapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthenticationService {
@@ -51,6 +57,28 @@ public class AuthenticationService {
                 .userDTO(convertToUserDTO(user))
                 .build();
     }
+
+    public ResponseEntity<String> logout(){
+
+        ResponseCookie responseCookie = ResponseCookie.from("JWT", "")
+        .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .body("Logged out successfully");
+    }
+
+//    public Map<String, Object> getOnlineUsers(){
+//        List<User> usersList = userRepository.findByIsOnlineTrue();
+//        Map<String, Object> onlineUsers = usersList.stream()
+//                .collect(Collectors.toMap(User::getUsername, User::getEmail));
+//        return onlineUsers;
+//    }
 
 
 

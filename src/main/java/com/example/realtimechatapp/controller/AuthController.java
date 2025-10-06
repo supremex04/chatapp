@@ -7,7 +7,6 @@ import com.example.realtimechatapp.dto.UserDTO;
 import com.example.realtimechatapp.model.User;
 import com.example.realtimechatapp.repository.UserRepository;
 import com.example.realtimechatapp.service.AuthenticationService;
-import org.apache.coyote.Response;
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
