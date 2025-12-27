@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 @Component
+// OncePerRequestFilter  ensures this filter runs exactly once per HTTP request
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
