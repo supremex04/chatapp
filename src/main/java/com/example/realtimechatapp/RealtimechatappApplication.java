@@ -9,5 +9,4 @@ public class RealtimechatappApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RealtimechatappApplication.class, args);
 	}
-
 }

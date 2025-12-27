@@ -86,8 +86,6 @@ public class ChatController {
             catch (Exception e){
                 System.out.println("ERROR occured while sending message "+ e.getMessage());
                 e.printStackTrace();
-
-
             }
         }
         else {

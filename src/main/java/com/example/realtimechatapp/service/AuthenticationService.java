@@ -44,11 +44,9 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         user.setEmail(registerRequestDTO.getEmail());
 
-        User savedUser = userRepository.save(user);
+        userRepository.save(user);
         // return a safe version of user as userDTO, without sensitive info.
         return convertToUserDTO(user);
-
-
     }
 
     // check username - verify password - create JWT that represents logged in user - return token+ safe user info
@@ -88,8 +86,6 @@ public class AuthenticationService {
                 .collect(Collectors.toMap(User::getUsername, user -> user));
         return onlineUsers;
     }
-
-
 
     public UserDTO convertToUserDTO(User user){
         UserDTO userDTO = new UserDTO();

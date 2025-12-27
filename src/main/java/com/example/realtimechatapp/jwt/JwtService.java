@@ -11,7 +11,6 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 @Service
@@ -52,8 +51,6 @@ public class JwtService {
 
     public String generateToken(User user){
         return generateToken(new HashMap<>(), user);
-
-
     }
 
     public String generateToken(Map<String, Object> extraClaims, User user){
@@ -67,7 +64,6 @@ public class JwtService {
                 .expiration(new Date(System.currentTimeMillis()+jwtExpiration))
                 .signWith(getSignInKey())
                 .compact();
-
     }
 
     public boolean isTokenValid(String jwtToken, User user){
@@ -84,10 +80,5 @@ public class JwtService {
     private Date extractExpiration(String jwtToken){
         return extractClaim(jwtToken, Claims::getExpiration);
     }
-
-
-
-
-
 
 }

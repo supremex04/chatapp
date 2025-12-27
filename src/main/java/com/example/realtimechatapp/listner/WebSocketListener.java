@@ -37,8 +37,4 @@ public class WebSocketListener {
         messagingTemplate.convertAndSend("/topic/public", chatMessage);
 
     }
-
-
-
-
 }
