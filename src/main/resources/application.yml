@@ -1,18 +1,26 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:realtimechatapplication
-    driverClassName: org.h2.Driver
-    username: test
+    url: jdbc:postgresql://localhost:5432/main_db
+    username: deltauser
     password: password
+    driver-class-name: org.postgresql.Driver
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update  # Changed from create-drop to update
     show-sql: true
-    h2:
-      console:
-        enabled: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
 jwt:
-  secret: testSecret
+  secret: 3cfa76ef9db97e987c24a1c6b76c35e5a1f2b9c8d4e6f7a8a0e4d1e2f3a4b5c6
   expiration: 360000
 
+# Optional: Logging configuration
+logging:
+  level:
+    com.example.realtimechatapp: DEBUG

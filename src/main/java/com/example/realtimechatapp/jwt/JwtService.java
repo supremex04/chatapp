@@ -25,10 +25,11 @@ public class JwtService {
     // extract the User ID from JWT token
 
     public Long extractUserId(String jwtToken){
-        String userIdStr = extractClaim(jwtToken, claims -> claims.get("userId", String.class));
+        // Extract userId as Integer first (as that's how JWT stores numeric values)
+        Integer userIdInt = extractClaim(jwtToken, claims -> claims.get("userId", Integer.class));
 
-        return userIdStr != null ? Long.parseLong(userIdStr): null;
-
+        // Convert Integer to Long
+        return userIdInt != null ? userIdInt.longValue() : null;
     }
 
     private <T> T extractClaim(String jwtToken, Function<Claims, T> claimsResolver){

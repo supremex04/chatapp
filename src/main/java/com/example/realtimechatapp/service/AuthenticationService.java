@@ -37,16 +37,18 @@ public class AuthenticationService {
         if(userRepository.findByUsername(registerRequestDTO.getUsername()).isPresent()){
             throw new RuntimeException("Username is already in use");
         }
+        if (registerRequestDTO != null) {
+            User user = new User();
+            user.setUsername(registerRequestDTO.getUsername());
+            // BCrypt hash of password is stored in db
+            user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
+            user.setEmail(registerRequestDTO.getEmail());
 
-        User user = new User();
-        user.setUsername(registerRequestDTO.getUsername());
-        // BCrypt hash of password is stored in db
-        user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
-        user.setEmail(registerRequestDTO.getEmail());
-
-        userRepository.save(user);
-        // return a safe version of user as userDTO, without sensitive info.
-        return convertToUserDTO(user);
+            userRepository.save(user);
+            // return a safe version of user as userDTO, without sensitive info.
+            return convertToUserDTO(user);
+        }
+        throw new RuntimeException("Invalid username or password");
     }
 
     // check username - verify password - create JWT that represents logged in user - return token+ safe user info
